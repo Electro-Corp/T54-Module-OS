@@ -1,0 +1,7 @@
+default=0
+timeout=0
+
+title T54 Kernel
+set gfxpayload=480x360x32
+kernel /boot/kernel
+
