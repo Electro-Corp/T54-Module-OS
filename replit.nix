@@ -1,5 +1,6 @@
 { pkgs }: {
     deps = [
+      pkgs.gdb
         pkgs.unixtools.util-linux
         pkgs.wget
         pkgs.texinfoInteractive

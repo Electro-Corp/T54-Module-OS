@@ -4,6 +4,9 @@
 #ifndef MODULE_H
 #define MODULE_H
 
+#include "cd.h"
+#include "fs.h"
+
 /*
   These files are extremly simple
 

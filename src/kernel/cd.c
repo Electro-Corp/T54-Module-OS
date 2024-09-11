@@ -1,20 +1,8 @@
 #ifndef HD_C
 #define HD_C
+#include "cd.h"
+#include "io.h"
 #include "stdint.h"
-
-// IO
-// read from port
-unsigned char inb(unsigned short _port)
-{
-  unsigned char rv;
-  __asm__ __volatile__("inb %1, %0" : "=a" (rv) : "dN" (_port));
-  return rv;
-}
-// write to port
-void outb(unsigned short _port, unsigned char _data)
-{
-  __asm__ __volatile__("outb %1, %0" : : "dN" (_port), "a" (_data));
-}
 
 static __inline void insw(uint16_t __port, void* __buf, unsigned long __n) {
   __asm__ __volatile__("cld; rep; insw"
@@ -51,7 +39,7 @@ static void ata_io_wait(const uint8_t p) {
 
 
 int read_cdrom(uint16_t port, int slave, uint32_t lba, uint32_t sectors, uint16_t* buffer) {
-
+  
   // The command
   volatile uint8_t read_cmd[12] = { 0xA8, 0,
                    (lba >> 0x18) & 0xFF, (lba >> 0x10) & 0xFF, (lba >> 0x08) & 0xFF,
@@ -67,6 +55,7 @@ int read_cdrom(uint16_t port, int slave, uint32_t lba, uint32_t sectors, uint16_
   outb(port + LBA_HIGH, 2048 >> 8);
   outb(port + COMMAND_REGISTER, 0xA0); 
   ata_io_wait(port); 
+    //dkprintf("[CD-ROM] Waiting for status");
 
   while (1) {
     uint8_t status = inb(port + COMMAND_REGISTER);
@@ -79,8 +68,11 @@ int read_cdrom(uint16_t port, int slave, uint32_t lba, uint32_t sectors, uint16_
   }
 
 
-
+  //
+  //tdebug("[read_cdrom] sending command...");
+    //dkprintf("[CD-ROM] Sending command");
   outsw(port + DATA, (uint16_t*)read_cmd, 6);
+    //dkprintf("[CD-ROM] Read data");
   for (uint32_t i = 0; i < sectors; i++) {
     while (1) {
       uint8_t status = inb(port + COMMAND_REGISTER);
@@ -95,6 +87,7 @@ int read_cdrom(uint16_t port, int slave, uint32_t lba, uint32_t sectors, uint16_
 
     insw(port + DATA, (uint16_t*)((uint8_t*)buffer + i * 0x800), size / 2); 
   }
+    //dkprintf("[CD-ROM] Read finished, thank you.");
   return 0;
 }
 

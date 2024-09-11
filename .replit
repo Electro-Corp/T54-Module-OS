@@ -5,3 +5,7 @@ channel = "stable-24_05"
 
 [deployment]
 run = ["sh", "-c", "gcc main.c -o main && ./main"]
+
+[[ports]]
+localPort = 1234
+externalPort = 80

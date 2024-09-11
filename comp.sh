@@ -10,9 +10,11 @@ gcc -c  src/kernel/kernel.c -m32 -fno-builtin -fno-stack-protector -nostartfiles
 gcc -c  src/kernel/cd.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/cd.o
 gcc -c  src/kernel/fs.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/fs.o
 
+gcc -c  src/kernel/module.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/module.o
+
 
 echo Link OS
-ld -T link.ld -melf_i386 out/boot.o out/kernel.o out/cd.o out/fs.o -o iso/boot/kernel
+ld -T link.ld -melf_i386 out/boot.o out/kernel.o out/fs.o out/cd.o out/module.o -o iso/boot/kernel
 
 
 echo Comp Kernel Modules
@@ -32,4 +34,4 @@ mkisofs -R                              \
 -V "T54 Root FS"                \
 iso
 
-qemu-system-x86_64 -drive file=t54.iso,if=ide,media=cdrom
+qemu-system-x86_64 -drive file=t54.iso,if=ide,media=cdrom -hdd test.img 
