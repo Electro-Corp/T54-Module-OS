@@ -12,4 +12,6 @@ int memcmp(const void* aptr, const void* bptr, int size);
 void* memcpy(void* restrict dstptr, const void* restrict srcptr, int size);
 
 char* itoa(int num, int base, char* str);
+
+int charToInt(const char *str);
 #endif

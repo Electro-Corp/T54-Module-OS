@@ -1,0 +1,13 @@
+
+iso/modules/base/Vga.o:     file format elf32-i386
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 M_Vga.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .text.__x86.get_pc_thunk.ax	00000000 .text.__x86.get_pc_thunk.ax
+00000000 g     F .text	00000010 moduleInit
+00000000 g     F .text.__x86.get_pc_thunk.ax	00000000 .hidden __x86.get_pc_thunk.ax
+00000000         *UND*	00000000 _GLOBAL_OFFSET_TABLE_
+00000010 g     F .text	00000010 swag
+
+
