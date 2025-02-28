@@ -4,10 +4,10 @@
 #ifndef STRING_H
 #define STRING_H
 
-static int strlen(char *str){
-  int i = 0;
-  while(str[i++]){}
-  return i;
+static int strlen(const char *str){
+	const char *s;
+	for (s = str; *s; ++s);
+	return (s - str);
 }
 
 static char* strcat(char *dst, const char *src){
@@ -44,6 +44,22 @@ static char* strcpy(char *dst, const char *src){
   return (dst);
 }
 
+static char* strncpy(char *dst, const char *src, int n){
+  if (n != 0) {
+    char *d = dst;
+    const char *s = src;
+    do {
+      if((*d++ = *s++) == 0) {
+        /* NUL pad the remaining n-1 bytes */
+        while(--n != 0)
+          *d++ = 0;
+        break;
+      }
+    }while (--n != 0);
+  }
+  return (dst);
+}
+
 static int strcmp(const char *s1, const char *s2){
   while (*s1 == *s2++)
     if (*s1++ == 0)
@@ -51,5 +67,13 @@ static int strcmp(const char *s1, const char *s2){
   return (*(unsigned char *)s1 - *(unsigned char *)--s2);
 }
 
+
+static int strclr(const char *s1){
+  int n = strlen(s1);
+  char *s = s1;
+  for(int i = 0; i < n; i++){
+    *s++ = '\0';
+  }
+}
 
 #endif

@@ -24,10 +24,11 @@ with open(file, "r") as o:
 
             if(len(stuff) > 2):
                 if(stuff[1] == 'g'):
-                    addr = stuff[0]
-                    size = stuff[8]
-                    name = stuff[9]
-                    w.write(f"{addr} {size} {name}")
+                    addr = int(stuff[0], 16)
+                    size = int(stuff[8], 16)
+                    name = stuff[9].strip('\n')
+                    if('.' not in name):
+                        w.write(f"{addr} {size} {name}.")
 
             count += 1
         pass

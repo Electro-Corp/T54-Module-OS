@@ -106,10 +106,10 @@ void initCDFS(){
 */
 void readDirectory(uint8_t* data, char* dirs){
   int currentpos = 000;
-  for(int i = 0; i < 256; i++){
+  for(int i = 0; i < MAX_READ_DIRECTORY; i++){
     int flags = data[currentpos + 25];
     int idSize = data[currentpos + 32];
-    char Tid[256] = {0};
+    char Tid[MAX_READ_DIRECTORY] = {0};
     for(int i = 0; i < idSize && data[i + currentpos + 33] != ';'; i++){
         if((flags >> 1) & 1 == 1 || data[i + currentpos + 34] == ';'){
           if(data[i + currentpos + 33] == '.') break;
@@ -145,7 +145,7 @@ void readDirectory(uint8_t* data, char* dirs){
       d_entries[cDirE] = d;
 
       // Print it out
-      //kprintf(d_entries[cDirE].fileID);
+      kprintf(d_entries[cDirE].fileID);
     }
 
     // Check if its a sub-directory
@@ -161,19 +161,26 @@ void readDirectory(uint8_t* data, char* dirs){
   }
 }
 
+
 /*
   Read a specifc file into a buffer.
 */
 int readFile(char* filePath, uint16_t* buffer){
   // Scan for file
   CD_DirectoryEntry* tmp = getFile(filePath);
+  return readFileFromEntry(tmp, buffer);
+}
+
+int readFileFromEntry(CD_DirectoryEntry* entry, uint16_t* buffer){
   // Make sure it exists and its not a directory
-  if(tmp != NULL && tmp->isDirectory == 0){
+  if(entry != NULL && entry->isDirectory == 0){
     int secs = 1;
-    if(tmp->sizeOfExtent / 2048 > 1){ 
-      secs = tmp->sizeOfExtent / 2048;
+  
+    if(entry->sizeOfExtent / 2048 > 1){ 
+      secs = entry->sizeOfExtent / 2048;
     }
-    read_cdrom(0x1F0, 0, tmp->locOfExtent, secs, (uint16_t*)buffer);
+    read_cdrom(0x1F0, 0, entry->locOfExtent, secs, (uint16_t*)buffer);
+
     // We chillin
     return 0; 
   }

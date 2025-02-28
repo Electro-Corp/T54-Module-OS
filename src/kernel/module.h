@@ -8,6 +8,7 @@
 #include "fs.h"
 
 #include "stdlib.h"
+#include "string.h"
 
 #define READLINEQUIT 256
 
@@ -20,19 +21,21 @@
 typedef struct {
   char name[16];
   uint32_t* addr;
+  uint32_t* size;
 } Function_B;
 
 // Base modules, all chars inside are fixed length
 // since the Memory Managment System is a module 
 typedef struct {
-  char name[16];
-  char path[16];
-  char Function_B[16];
+  char name[32];
+  char path[32];
+  Function_B functions[16];
+  int functionCount;
   CD_DirectoryEntry* entry;
 } Module_B;
 
 int m_baseModCount = 0;
-Module_B* m_baseModules[16];
+Module_B m_baseModules[16];
 
 
 // Normal Module
@@ -56,5 +59,11 @@ void m_LoadBasicModule(char* modPath, char* symPath);
   Does this function exist?
 */
 int m_DoesFunctionExist(char* moduleName, char* functionName);
+
+
+/*
+  Debug print all modules and functions
+*/
+void m_PrintAllModuleData();
 
 #endif

@@ -27,8 +27,7 @@ void* memcpyBounded(void* restrict dstptr, const void* restrict srcptr, int star
   return dstptr;
 }
 
-void reverse(char str[], int length)
-{
+void reverse(char str[], int length) {
     int start = 0;
     int end = length - 1;
     while (start < end) {
@@ -40,32 +39,43 @@ void reverse(char str[], int length)
     }
 }
 
-char* itoa(int num, int base, char* str){
-    int i = 0;
-    int neg = 0;
-    if(num == 0){
-        str[i++] = '0';
-        str[i] = '\0';
+char* itoa(int num, int base, char* str) {
+    // Validate the base
+    if (base < 2 || base > 16) {
+        *str = '\0';  // Invalid base, return empty string
         return str;
     }
 
-    if(num < 0 && base == 10){
-        neg = 1;
-        num *= -1;
+    // Handle 0 explicitly, otherwise empty string is used
+    if (num == 0) {
+        str[0] = '0';
+        str[1] = '\0';
+        return str;
     }
 
-    while(num != 0){
+    // Handle negative numbers only for base 10
+    int i = 0;
+    int neg = 0;
+    if (num < 0 && base == 10) {
+        neg = 1;
+        num = -num;
+    }
+
+    // Process individual digits
+    while (num != 0) {
         int rem = num % base;
         str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
-        num = num / base;
+        num /= base;
     }
 
-    if(neg){
+    // Append negative sign for base 10
+    if (neg) {
         str[i++] = '-';
     }
 
-    str[i] = '\0';
+    str[i] = '\0'; // Null-terminate string
 
+    // Reverse the string
     reverse(str, i);
 
     return str;

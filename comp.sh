@@ -5,28 +5,38 @@ nasm -f elf src/kernel/boot.asm -o out/boot.o
 
 
 echo Comp Kernel C Source
-gcc -c  src/kernel/kernel.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/kernel.o
+gcc -O0 -c src/kernel/kernel.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/kernel.o
 
-gcc -c  src/kernel/cd.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/cd.o
-gcc -c  src/kernel/fs.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/fs.o
+gcc -O0 -c src/kernel/cd.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/cd.o
+gcc -O0 -c src/kernel/fs.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/fs.o
 
-gcc -c  src/kernel/module.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/module.o
+gcc -O0 -c src/kernel/module.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/module.o
 
-gcc -c  src/kernel/stdlib.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/stdlib.o
+gcc -O0 -c src/kernel/stdlib.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/stdlib.o
+
+gcc -O0 -c src/kernel/vga.c -m32 -fno-builtin -fno-stack-protector -nostartfiles -W -ffreestanding -o out/vga.o
+
 
 
 echo Link OS
-ld -T link.ld -melf_i386 out/boot.o out/kernel.o out/fs.o out/cd.o out/module.o out/stdlib.o -o iso/boot/kernel
+ld -T link.ld -melf_i386 out/boot.o out/kernel.o out/fs.o out/cd.o out/module.o out/stdlib.o out/vga.o -o iso/boot/kernel
 
 
 echo Comp Kernel Modules
-gcc -m32 -c src/modules/VGA/M_Vga.c -o iso/modules/base/Vga.o
-objcopy -O binary iso/modules/base/Vga.o iso/modules/base/Vga.kmod
-objdump -t iso/modules/base/Vga.o > iso/modules/base/Vga.symbols
-python3 symbolConv.py iso/modules/base/Vga.symbols iso/modules/base/VGA.SYM
+
+rm iso/modules/modules/base -r -f -d
+
+# mkdir iso/modules/modules/base
+
+gcc -m32 -O0 -c src/modules/VGA/M_Vga.c -o iso/kmods/base/Vga.o
+objcopy -O binary iso/kmods/base/Vga.o iso/kmods/base/Vga.kmod
+objdump -t iso/kmods/base/Vga.o > out/Vga.symbols
+rm iso/kmods/base/Vga.o
+
+python3 symbolConv.py out/Vga.symbols iso/kmods/base/VGA.SYM
 
 
-#gcc -m32 -c src/modules/MemoryManager/M_MemoryManager.c -fPIC -o iso/modules/base/MemMan.kmod
+#gcc -m32 -O0 -csrc/modules/MemoryManager/M_MemoryManager.c -fPIC -o iso/modules/base/MemMan.kmod
 #objdump -t iso/modules/base/MemMan.kmod > iso/modules/base/MemMan.symbols
 
 

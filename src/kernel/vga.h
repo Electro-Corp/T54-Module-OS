@@ -1,13 +1,10 @@
 /*
-  Memory Managment Module
-
-  Path: /modules/base/VGA.kmod
+    Header for VGA
 */
+#ifndef VGA_H
+#define VGA_H
 
-#ifndef M_VGA_H
-#define M_VGA_H
-
-void moduleInit();
+#include "string.h"
 
 static int row = 0;
 

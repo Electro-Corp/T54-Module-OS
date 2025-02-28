@@ -4,6 +4,10 @@ void moduleInit(){
   // Do something
 }
 
-void swag(){
+void charAt(char c, int x, int y, unsigned char color){
+  // Awesome
+}
+
+void clearScreen(){
   
 }

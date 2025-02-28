@@ -3,6 +3,8 @@
 */
 #include "cd.h"
 
+#include "vga.h"
+
 int kmain(){
   // Just for fun, the main design idea of this OS is that everything that can be a 
   // kernel module is a kernel module. However, certain things HAVE to be built into the kernel 
@@ -14,10 +16,13 @@ int kmain(){
   // > module.c
   //  > Actually loads in the modules
 
+  initTerminal();
   
   m_InitModuleManager();
   
-  m_LoadBasicModule("/modules/VGA/M_Vga.kmod", "/modules/VGA/VGA.SYM");
+  m_LoadBasicModule("/KMODS/BASE/VGA.KMOD", "/KMODS/BASE/VGA.SYM");
+
+  m_PrintAllModuleData();
   
   asm("hlt");
 }
