@@ -22,6 +22,8 @@ typedef struct {
   char name[16];
   uint32_t* addr;
   uint32_t* size;
+  void (*call)(void);
+  uint16_t* funcData;
 } Function_B;
 
 // Base modules, all chars inside are fixed length
@@ -29,9 +31,10 @@ typedef struct {
 typedef struct {
   char name[32];
   char path[32];
-  Function_B functions[16];
   int functionCount;
   CD_DirectoryEntry* entry;
+  uint16_t* rawData;
+  Function_B functions[16];
 } Module_B;
 
 int m_baseModCount = 0;
@@ -53,13 +56,17 @@ void m_InitModuleManager();
 /*
   Load a module
 */
-void m_LoadBasicModule(char* modPath, char* symPath);
+void m_LoadBasicModule(char* modName, char* modPath, char* symPath);
 
 /*
   Does this function exist?
 */
 int m_DoesFunctionExist(char* moduleName, char* functionName);
 
+/*
+  Run function from module
+*/
+void m_RunFunctionFromModule(char* module, char* funcName);
 
 /*
   Debug print all modules and functions

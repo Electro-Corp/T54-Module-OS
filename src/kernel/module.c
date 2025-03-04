@@ -5,33 +5,29 @@ void m_InitModuleManager(){
   initFS();
 }
 
-void m_LoadBasicModule(char* modPath, char* symPath){
-  //kprintf("===== LOAD SYM PATH =====");
-  //kprintf(symPath);
-
+void m_LoadBasicModule(char* modName, char* modPath, char* symPath){
   CD_DirectoryEntry* symbolFile = getFile(symPath);
 
   Module_B module;
-  strcpy(module.name, modPath);
+  strcpy(module.name, modName);
   strcpy(module.path, symPath);
   int functionsInMod = 0;
 
   uint32_t sizeOfSymBuf = symbolFile->sizeOfExtent;
   uint16_t symbolBuffer[2049];
 
-  //char wo[3];
-  //itoa(sizeOfSymBuf, 10, wo);
-  //kprintf(wo);
-
   if(readFileFromEntry(symbolFile, &symbolBuffer) == -1){
     kprintf("Reading SYM failed.");
   }
 
-  int tmp = 0;
-  while(symbolBuffer[tmp++]){}
+  // Load Module into memory
+  CD_DirectoryEntry* modFile = getFile(modPath);
+  if(!modFile) kprintf("Module Data File not found");
+  uint16_t moduleTotalSize = modFile->sizeOfExtent;
+  uint16_t moduleData[5000];
+  readFileFromEntry(modFile, &moduleData);
 
-  //itoa(tmp, 10, wo);
-  //kprintf(wo);
+  module.rawData = &moduleData;
 
 
   char fileData[sizeOfSymBuf];
@@ -58,7 +54,7 @@ void m_LoadBasicModule(char* modPath, char* symPath){
 
   Function_B functionTmp = {};
 
-  for(int l = 0; l < symbolFile->sizeOfExtent; l++){
+  for(int l = 0; l < sizeOfSymBuf; l++){
     if((char)fileData[l] == ' '){
       bufC = 0;
       switch(count){
@@ -80,6 +76,13 @@ void m_LoadBasicModule(char* modPath, char* symPath){
       strncpy(functionTmp.name, name , bufC);
       functionTmp.addr = addr;
       functionTmp.size = size;
+      uint16_t funcDataRaw[size];
+      for(int g = 0; g < size; g++){
+        funcDataRaw[g] = moduleData[addr + g];
+      }
+      //memcpy(funcDataRaw, moduleData[addr], size);
+      functionTmp.funcData = &funcDataRaw;
+      functionTmp.call = (void (*)())&funcDataRaw;
       // Create function from that
       module.functions[functionsInMod++] = functionTmp;
       // Reset everything
@@ -106,13 +109,25 @@ void m_LoadBasicModule(char* modPath, char* symPath){
           break;
       }
     }
-      
-    
   }
-
   module.functionCount = functionsInMod;
   
   m_baseModules[m_baseModCount++] = module;
+
+}
+
+void m_RunFunctionFromModule(char* module, char* funcName){
+  for(int i = 0; i < m_baseModCount; i++){
+    Module_B mod = m_baseModules[i];
+    if(strcmp(mod.name, module) == 0){
+      for(int x = 0; x < mod.functionCount; x++){
+        Function_B func = mod.functions[x];
+        if(strcmp(func.name, funcName) == 0){
+          func.call();
+        }
+      }
+    }
+  }
 }
 
 void m_PrintAllModuleData(){

@@ -28,8 +28,12 @@ rm iso/modules/modules/base -r -f -d
 
 # mkdir iso/modules/modules/base
 
-gcc -m32 -O0 -c src/modules/VGA/M_Vga.c -o iso/kmods/base/Vga.o
-objcopy -O binary iso/kmods/base/Vga.o iso/kmods/base/Vga.kmod
+#gcc -m32 -O0 -c src/modules/VGA/M_Vga.c -o iso/kmods/base/Vga.o
+#objcopy -O binary iso/kmods/base/Vga.o iso/kmods/base/Vga.kmod
+#gcc -m32 -ffreestanding -nostdlib -fno-pic -O0 -c src/modules/VGA/M_Vga.c -o iso/kmods/base/Vga.o
+#ld -Ttext 0x0 --oformat binary iso/kmods/base/Vga.o -o iso/kmods/base/Vga.kmod
+gcc -ffreestanding -nostdlib -m32 -fno-pic -c src/modules/VGA/M_Vga.c -o iso/kmods/base/Vga.o
+ld -m elf_i386 -Ttext 0x0 --oformat  binary iso/kmods/base/Vga.o -T src/modules/module.ld -o iso/kmods/base/Vga.kmod
 objdump -t iso/kmods/base/Vga.o > out/Vga.symbols
 rm iso/kmods/base/Vga.o
 

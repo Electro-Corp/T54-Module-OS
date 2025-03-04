@@ -20,9 +20,11 @@ int kmain(){
   
   m_InitModuleManager();
   
-  m_LoadBasicModule("/KMODS/BASE/VGA.KMOD", "/KMODS/BASE/VGA.SYM");
+  m_LoadBasicModule("VGA", "/KMODS/BASE/VGA.KMO", "/KMODS/BASE/VGA.SYM");
 
   m_PrintAllModuleData();
+
+  m_RunFunctionFromModule("VGA", "moduleInit");
   
   asm("hlt");
 }
